@@ -25,7 +25,7 @@ module TermColor
       escape_or_unescape(:unescape, text)
     end
 
-    def escape_or_unescape(dir=:escape, text)
+    def escape_or_unescape(dir, text)
       h = Hash[*%w(& &amp; < &lt; > &gt; ' &apos; " &quot;)]
       h = h.invert if dir == :unescape
       text.gsub(/(#{h.keys.join('|')})/){ h[$1] }
@@ -41,10 +41,10 @@ module TermColor
       text.gsub(re) do
         matchs = $~.captures
         if matchs.shift.empty?
-          tag = ->t{ "<#{t}>" }
+          tag = lambda {|t| "<#{t}>" }
         else
           matchs.reverse!
-          tag = ->t{ "</#{t}>" }
+          tag = lambda {|t| "</#{t}>" }
         end
         matchs.compact.map { |word| tag[word] }.join
       end
